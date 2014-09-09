@@ -9,7 +9,7 @@ cos = np.cos
 sin = np.sin
 pi  = np.pi
 def reader(fn='igstrain_load_ph1.out',isort=False,icheck=False):
-    if isort: from ssort import sh as sort
+    if isort: from MP.ssort import sh as sort
     dl = open(fn).readlines()
     npb = dl[1].split()[0]
     dl = dl[2:]
@@ -126,7 +126,7 @@ def read_exp(fn='Bsteel_BB_00.txt',path='rs'):
     from os import sep
     from glob import glob
     from plot_sin2psi import read as read
-    from ssort import sh as sort
+    from MP.ssort import sh as sort
 
     paths = '%s%s'%(path,sep)
 
@@ -592,33 +592,27 @@ class ResidualStress:
                  #fnmod_ig='igstrain_unload_ph1.out',
                  #fnmod_ig='igstrain_bix_ph1.out',
                  fnmod_ig='igstrain_fbulk_ph1.out',
-
                  fnmod_sf='igstrain_fbulk_ph1.out',
-
                  fnmod_str='STR_STR.OUT',
-
                  fnexp_ehkl='Bsteel_BB_00.txt',
-
                  fnexp_sf='YJ_Bsteel_BB.sff',
-
                  exppath='rs',
-
                  fnPF='rs/new_flowcurves.dat',
                  ifig=1,i_ip=0):
         """
         Arguments
         =========
-        fnmod='int_els_ph1.out'
-        fnig='igstrain_unload_ph1.out'
-        fnsf='igstrain_fbulk_ph1.out'
-        fnstr='STR_STR.OUT'
-        fnexp_ehkl='Bsteel_BB_00.txt'
-
-        fnexp_sf='YJ_Bsteel_BB.sff'
-        exppath='rs'
-        ifig=1
-
-        i_ip = 0 (collective stress analysis)
+        mode_ext     = None
+        fnmod_epshkl = 'int_els_ph1.out'
+        fnmod        = 'int_els_ph1.out'
+        fnmod_ig     = 'igstrain_fbulk_ph1.out'
+        fnmod_sf     = 'igstrain_fbulk_ph1.out'
+        fnexp_ehkl   = 'Bsteel_BB_00.txt'
+        fnexp_sf     = 'YJ_Bsteel_BB.sff'
+        exppath      = 'rs'
+        fnPF         = 'rs/new_flowcurves.dat'
+        ifig         = 1
+        i_ip         = 0 (collective stress analysis)
                1 (stress analysis only to check consistency in model)
         """
         if mod_ext!=None:
@@ -643,7 +637,7 @@ class ResidualStress:
         #  3     (2,3)         (1,2)
         #  4     (1,3)         (1,3)
         #  5     (1,2)         (2,3)
-        import paths;paths.main()
+        # import paths;paths.main()
         #from ssort import sh as sort
 
         if i_ip==0:
@@ -713,7 +707,7 @@ class ResidualStress:
         """
         from RS import pepshkl
         from pepshkl import reader2 as reader_sf
-        from ssort import sh as sort
+        from MP.ssort import sh as sort
         # eps^hkl from model
         datm = reader(fnmod_epshkl,isort=True)
         self.stepsm = map(int,datm[-1])
@@ -791,9 +785,18 @@ class ResidualStress:
         self.stressm_con = np.array([s11,s22,s33,s12,s13,s23])
         self.strainm = []
         self.stressm = []
+
+        ##
+        # for ist in range(len(self.stepsm)):
+        #     self.strainm.append(self.strainm_con.T[self.stepsm[ist]])
+        #     self.stressm.append(self.stressm_con.T[self.stepsm[ist]])
+
+        ## for data generated from 'unloaded' snapshots
+        ## the above indexing for strainm_con is not properly working
         for ist in range(len(self.stepsm)):
-            self.strainm.append(self.strainm_con.T[self.stepsm[ist]])
-            self.stressm.append(self.stressm_con.T[self.stepsm[ist]])
+            self.strainm.append(self.strainm_con.T[ist])
+            self.stressm.append(self.stressm_con.T[ist])
+
         self.strainm=np.array(self.strainm)
         self.stressm=np.array(self.stressm)
 
@@ -809,9 +812,9 @@ class ResidualStress:
         Read experimental eps^hkl, eps^0, stress factor
         """
         import os
-        from ssort import sh as sort
-        from ssort import shellSort as shsort
-        from ssort import ind_swap as idsort
+        from MP.ssort import sh as sort
+        from MP.ssort import shellSort as shsort
+        from MP.ssort import ind_swap as idsort
         from sff_plot import reader as read_sff
 
         self.phise,self.psise,self.ehkle,self.dhkle,straine\
@@ -856,7 +859,7 @@ class ResidualStress:
 
     def readPF(self,fnPF):
         from ght_anl import reader
-        from ssort import sh as sort
+        from MP.ssort import sh as sort
         fij, ig, phi, psi, strain, sij, dhkl,d0hkl,ehkl = reader(fnPF)
 
         phi,psi = __torad__(phi,psi)

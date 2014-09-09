@@ -9,7 +9,7 @@ cos = np.cos
 sin = np.sin
 pi  = np.pi
 def reader(fn='igstrain_load_ph1.out',isort=False,icheck=False):
-    if isort: from ssort import sh as sort
+    if isort: from MP.ssort import sh as sort
     dl = open(fn).readlines()
     npb = dl[1].split()[0]
     dl = dl[2:]
@@ -126,7 +126,7 @@ def read_exp(fn='Bsteel_BB_00.txt',path='rs'):
     from os import sep
     from glob import glob
     from plot_sin2psi import read as read
-    from ssort import sh as sort
+    from MP.ssort import sh as sort
 
     paths = '%s%s'%(path,sep)
 
@@ -643,8 +643,8 @@ class ResidualStress:
         #  3     (2,3)         (1,2)
         #  4     (1,3)         (1,3)
         #  5     (1,2)         (2,3)
-        import paths;paths.main()
-        #from ssort import sh as sort
+        #import paths;paths.main()
+        #from MP.ssort import sh as sort
 
         if i_ip==0:
 
@@ -713,7 +713,7 @@ class ResidualStress:
         """
         from RS import pepshkl
         from pepshkl import reader2 as reader_sf
-        from ssort import sh as sort
+        from MP.ssort import sh as sort
         # eps^hkl from model
         datm = reader(fnmod_epshkl,isort=True)
         self.stepsm = map(int,datm[-1])
@@ -809,9 +809,9 @@ class ResidualStress:
         Read experimental eps^hkl, eps^0, stress factor
         """
         import os
-        from ssort import sh as sort
-        from ssort import shellSort as shsort
-        from ssort import ind_swap as idsort
+        from MP.ssort import sh as sort
+        from MP.ssort import shellSort as shsort
+        from MP.ssort import ind_swap as idsort
         from sff_plot import reader as read_sff
 
         self.phise,self.psise,self.ehkle,self.dhkle,straine\
@@ -856,7 +856,7 @@ class ResidualStress:
 
     def readPF(self,fnPF):
         from ght_anl import reader
-        from ssort import sh as sort
+        from MP.ssort import sh as sort
         fij, ig, phi, psi, strain, sij, dhkl,d0hkl,ehkl = reader(fnPF)
 
         phi,psi = __torad__(phi,psi)
